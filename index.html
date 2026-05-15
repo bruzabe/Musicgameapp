@@ -308,15 +308,27 @@ function loadQuestion(){
 function togglePlay(){
   if(!curQ)return;
   if(isPlaying){
-    pauseTrack();isPlaying=false;
+    if(player) player.pause();
+    isPlaying=false;
     document.getElementById("playBtn").textContent="▶";
     document.getElementById("playStatus").textContent="Pausado";
     document.getElementById("disc").classList.remove("spin");
   } else {
-    playTrack(curQ.uri);isPlaying=true;
-    document.getElementById("playBtn").textContent="⏸";
-    document.getElementById("playStatus").textContent="Reproduciendo 🎵";
-    document.getElementById("disc").classList.add("spin");
+    // Primero activar el dispositivo, luego reproducir
+    player.activateElement().then(() => {
+      playTrack(curQ.uri);
+      isPlaying=true;
+      document.getElementById("playBtn").textContent="⏸";
+      document.getElementById("playStatus").textContent="Reproduciendo 🎵";
+      document.getElementById("disc").classList.add("spin");
+    }).catch(() => {
+      // Si falla activateElement, intentar directo
+      playTrack(curQ.uri);
+      isPlaying=true;
+      document.getElementById("playBtn").textContent="⏸";
+      document.getElementById("playStatus").textContent="Reproduciendo 🎵";
+      document.getElementById("disc").classList.add("spin");
+    });
   }
 }
 
