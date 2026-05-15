@@ -208,15 +208,8 @@ function initSpotifyPlayer(accessToken) {
 }
 
 async function playTrack(uri) {
-  if (!deviceId || !token) return;
-  // Primero transferir playback al dispositivo BeatGuess
-  await fetch(`https://api.spotify.com/v1/me/player`, {
-    method: "PUT",
-    headers: { "Authorization": "Bearer "+token, "Content-Type": "application/json" },
-    body: JSON.stringify({ device_ids: [deviceId], play: false })
-  });
-  // Esperar un momento y luego reproducir
-  await new Promise(r => setTimeout(r, 500));
+  if (!player || !deviceId || !token) return;
+  // Transferir playback a BeatGuess y reproducir
   await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
     method: "PUT",
     headers: { "Authorization": "Bearer "+token, "Content-Type": "application/json" },
@@ -225,10 +218,8 @@ async function playTrack(uri) {
 }
 
 async function pauseTrack() {
-  if (!deviceId || !token) return;
-  await fetch(`https://api.spotify.com/v1/me/player/pause?device_id=${deviceId}`, {
-    method: "PUT", headers: { "Authorization": "Bearer "+token }
-  });
+  if (!player) return;
+  player.pause();
 }
 
 window.onload = () => {
